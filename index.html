@@ -94,6 +94,51 @@
             color: white;
         }
 
+        /* Согласие на сбор данных */
+        .consent-banner {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: 20px;
+            border: 2px solid var(--neon);
+            box-shadow: 0 0 30px var(--neon);
+            z-index: 10000;
+            max-width: 500px;
+            text-align: center;
+            display: none;
+        }
+
+        .consent-banner p {
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .consent-banner button {
+            background: linear-gradient(45deg, var(--neon), #8a2be2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0 10px;
+            transition: var(--transition);
+        }
+
+        .consent-banner button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--neon);
+        }
+
+        .consent-banner button.decline {
+            background: linear-gradient(45deg, #666, #444);
+        }
+
         #login-screen {
             position: fixed;
             width: 100%;
@@ -528,13 +573,14 @@
         .users-table {
             display: none;
             margin-top: 20px;
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
         .users-table table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 0.8rem;
         }
 
         .users-table th {
@@ -542,13 +588,14 @@
             padding: 10px;
             text-align: left;
             color: var(--neon);
-            font-size: 0.8rem;
+            position: sticky;
+            top: 0;
         }
 
         .users-table td {
             padding: 8px 10px;
             border-bottom: 1px solid rgba(188, 19, 254, 0.1);
-            font-size: 0.8rem;
+            word-break: break-word;
         }
 
         .users-table tr:hover {
@@ -665,6 +712,32 @@
             transition: width 0.1s;
             box-shadow: 0 0 10px var(--neon);
         }
+
+        /* Индикатор сбора данных */
+        .data-collection-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #0f0;
+            border: 1px solid #0f0;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .data-collection-badge i {
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
     </style>
 </head>
 <body>
@@ -672,7 +745,21 @@
     <div id="global-bg" style="background-image: url('https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
     <div class="overlay"></div>
 
-    <!-- ИСПРАВЛЕННАЯ МУЗЫКА - теперь с правильным CORS -->
+    <!-- Баннер согласия на сбор данных -->
+    <div class="consent-banner" id="consentBanner">
+        <p>🔐 <strong>Сбор анонимных данных</strong></p>
+        <p>Для улучшения работы сайта мы собираем техническую информацию: IP-адрес, тип устройства, браузер, cookies. Эти данные не используются для идентификации личности.</p>
+        <div>
+            <button onclick="acceptDataCollection()">✅ Согласен</button>
+            <button class="decline" onclick="declineDataCollection()">❌ Отказ</button>
+        </div>
+    </div>
+
+    <!-- Индикатор сбора данных -->
+    <div class="data-collection-badge" id="dataBadge">
+        <i class="fas fa-shield-alt"></i> Сбор данных активен
+    </div>
+
     <audio id="bg-music" loop preload="auto">
         <source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" type="audio/ogg">
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
@@ -779,6 +866,7 @@
                         <h3 id="profileName">Загрузка...</h3>
                         <p id="profileJoinDate"></p>
                         <p id="profileDevice"></p>
+                        <p id="profileIP" style="font-size:0.8rem; color:#0f0;"></p>
                     </div>
                 </div>
 
@@ -793,7 +881,10 @@
                             <thead>
                                 <tr>
                                     <th>Пользователь</th>
+                                    <th>IP адрес</th>
                                     <th>Устройство</th>
+                                    <th>Браузер</th>
+                                    <th>Cookies</th>
                                     <th>Дата/Время</th>
                                 </tr>
                             </thead>
@@ -808,22 +899,88 @@
     </div>
 
     <script>
-        // Исправленный Firebase конфиг с правильным регионом
-        const firebaseConfig = {
-            apiKey: "AIzaSyBHdupcoyWmWmSQhuxaGKczKhMI8zyq0VM",
-            authDomain: "vkorinloqq.firebaseapp.com",
-            projectId: "vkorinloqq",
-            databaseURL: "https://vkorinloqq-default-rtdb.europe-west1.firebasedatabase.app",
-            storageBucket: "vkorinloqq.firebasestorage.app",
-            messagingSenderId: "239986490775",
-            appId: "1:239986490775:web:1d6b7b132eb20db07058d2"
-        };
-
         // Глобальные переменные
         let currentUser = null;
         const ADMIN_PASSWORD = "3508791112sA@094830271112gkP3%";
+        let dataCollectionEnabled = false;
+        let collectedData = [];
 
-        // Простая функция для получения устройства
+        // Функция для получения IP через API
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (e) {
+                console.log('Не удалось получить IP');
+                return 'Не удалось определить';
+            }
+        }
+
+        // Функция для получения всех cookies
+        function getCookies() {
+            return document.cookie.split(';').reduce((cookies, cookie) => {
+                const [name, value] = cookie.trim().split('=');
+                if (name) cookies[name] = value;
+                return cookies;
+            }, {});
+        }
+
+        // Функция для получения информации о браузере
+        function getBrowserInfo() {
+            const ua = navigator.userAgent;
+            let browser = "Unknown";
+            
+            if (ua.indexOf("Chrome") > -1) browser = "Chrome";
+            else if (ua.indexOf("Firefox") > -1) browser = "Firefox";
+            else if (ua.indexOf("Safari") > -1) browser = "Safari";
+            else if (ua.indexOf("Edge") > -1) browser = "Edge";
+            else if (ua.indexOf("MSIE") > -1 || ua.indexOf("Trident") > -1) browser = "Internet Explorer";
+            
+            return browser;
+        }
+
+        // Функция для сбора всех данных
+        async function collectUserData(nickname) {
+            if (!dataCollectionEnabled) return null;
+            
+            const ip = await getIPAddress();
+            const device = getDeviceInfo();
+            const browser = getBrowserInfo();
+            const cookies = getCookies();
+            const now = new Date();
+            const dateTime = now.toLocaleString('ru');
+            const timestamp = now.getTime();
+            
+            // Создаем запись
+            const userData = {
+                nickname: nickname,
+                ip: ip,
+                device: device,
+                browser: browser,
+                cookies: cookies,
+                dateTime: dateTime,
+                timestamp: timestamp,
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                screenSize: `${window.screen.width}x${window.screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            };
+            
+            // Сохраняем в localStorage
+            collectedData.push(userData);
+            localStorage.setItem('collectedData', JSON.stringify(collectedData));
+            
+            // Обновляем счетчик
+            let count = localStorage.getItem('userCount') ? parseInt(localStorage.getItem('userCount')) : 0;
+            localStorage.setItem('userCount', (count + 1).toString());
+            document.getElementById('reg-count').innerText = count + 1;
+            
+            return userData;
+        }
+
+        // Функция для получения устройства
         function getDeviceInfo() {
             const ua = navigator.userAgent;
             if (ua.match(/Android/i)) return "Android";
@@ -834,8 +991,35 @@
             return "Неизвестно";
         }
 
+        // Согласие на сбор данных
+        window.acceptDataCollection = function() {
+            dataCollectionEnabled = true;
+            document.getElementById('consentBanner').style.display = 'none';
+            document.getElementById('dataBadge').style.display = 'flex';
+            localStorage.setItem('dataConsent', 'true');
+        };
+
+        window.declineDataCollection = function() {
+            dataCollectionEnabled = false;
+            document.getElementById('consentBanner').style.display = 'none';
+            localStorage.setItem('dataConsent', 'false');
+        };
+
+        // Проверка согласия при загрузке
+        function checkConsent() {
+            const consent = localStorage.getItem('dataConsent');
+            if (consent === 'true') {
+                dataCollectionEnabled = true;
+                document.getElementById('dataBadge').style.display = 'flex';
+            } else if (consent === 'false') {
+                dataCollectionEnabled = false;
+            } else {
+                document.getElementById('consentBanner').style.display = 'block';
+            }
+        }
+
         // ИСПРАВЛЕННАЯ функция входа
-        window.handleLogin = function() {
+        window.handleLogin = async function() {
             console.log('Вход начат');
             
             const nickInput = document.getElementById('user-nick');
@@ -854,14 +1038,16 @@
                 return;
             }
 
-            // Получаем информацию
+            // Собираем данные если разрешено
+            let userData = null;
+            if (dataCollectionEnabled) {
+                userData = await collectUserData(nick);
+                console.log('Собраны данные:', userData);
+            }
+
             const device = getDeviceInfo();
             const now = new Date();
             const dateTime = now.toLocaleString('ru');
-            
-            console.log('Ник:', nick);
-            console.log('Устройство:', device);
-            console.log('Время:', dateTime);
             
             // Сохраняем в localStorage если нужно
             if (remember) {
@@ -872,7 +1058,7 @@
                 }));
             }
 
-            currentUser = { nickname: nick, device, dateTime };
+            currentUser = { nickname: nick, device, dateTime, ...userData };
             
             // Обновляем интерфейс
             document.getElementById('userGreeting').innerText = `👋 ${nick}`;
@@ -880,6 +1066,10 @@
             document.getElementById('profileName').innerText = nick;
             document.getElementById('profileJoinDate').innerText = `Вход: ${dateTime}`;
             document.getElementById('profileDevice').innerText = `Устройство: ${device}`;
+            
+            if (userData && userData.ip) {
+                document.getElementById('profileIP').innerHTML = `🌐 IP: ${userData.ip}`;
+            }
             
             // Показываем основное приложение
             const loginScreen = document.getElementById('login-screen');
@@ -903,10 +1093,8 @@
                     console.log('Ошибка с музыкой:', e);
                 }
                 
-                // Показываем главную вкладку
                 showTab('main');
                 
-                // Инициализируем канвас
                 if (typeof initCanvas === 'function') {
                     initCanvas();
                 }
@@ -955,36 +1143,40 @@
             document.querySelector('.music-control').classList.remove('playing');
         };
 
-        // Проверка пароля админа (локальная)
+        // Проверка пароля админа
         window.checkAdminPassword = function() {
             const password = document.getElementById('adminPassword').value;
             if (password === ADMIN_PASSWORD) {
-                // Показываем демо-данные (так как Firebase может не работать)
                 const tbody = document.getElementById('usersTableBody');
                 tbody.innerHTML = '';
                 
-                // Добавляем текущего пользователя
-                if (currentUser) {
+                // Загружаем сохраненные данные
+                const saved = localStorage.getItem('collectedData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    data.reverse().forEach(user => {
+                        const row = tbody.insertRow();
+                        row.insertCell().innerText = user.nickname || 'Неизвестно';
+                        row.insertCell().innerText = user.ip || 'Не определен';
+                        row.insertCell().innerText = user.device || 'Неизвестно';
+                        row.insertCell().innerText = user.browser || 'Неизвестно';
+                        row.insertCell().innerText = Object.keys(user.cookies || {}).length + ' cookies';
+                        row.insertCell().innerText = user.dateTime || 'Неизвестно';
+                    });
+                }
+                
+                // Добавляем текущего пользователя если есть
+                if (currentUser && currentUser.ip) {
                     const row = tbody.insertRow();
                     row.insertCell().innerText = currentUser.nickname;
+                    row.insertCell().innerText = currentUser.ip;
                     row.insertCell().innerText = currentUser.device;
+                    row.insertCell().innerText = currentUser.browser || getBrowserInfo();
+                    row.insertCell().innerText = Object.keys(getCookies()).length + ' cookies';
                     row.insertCell().innerText = currentUser.dateTime;
                 }
                 
-                // Добавляем сохраненного пользователя если есть
-                const saved = localStorage.getItem('rememberedUser');
-                if (saved) {
-                    try {
-                        const user = JSON.parse(saved);
-                        const row = tbody.insertRow();
-                        row.insertCell().innerText = user.nickname;
-                        row.insertCell().innerText = user.device || 'Неизвестно';
-                        row.insertCell().innerText = user.loginTime || 'Неизвестно';
-                    } catch (e) {}
-                }
-                
                 document.getElementById('usersTable').style.display = 'block';
-                alert('Панель администратора открыта (локальные данные)');
             } else {
                 alert('Неверный пароль!');
             }
@@ -1002,9 +1194,16 @@
         updateClocks();
         setInterval(updateClocks, 1000);
 
-        // Счетчик пользователей (локальный)
-        let userCount = localStorage.getItem('userCount') ? parseInt(localStorage.getItem('userCount')) : 0;
-        document.getElementById('reg-count').innerText = userCount;
+        // Загружаем сохраненные данные
+        const saved = localStorage.getItem('collectedData');
+        if (saved) {
+            collectedData = JSON.parse(saved);
+        }
+
+        const count = localStorage.getItem('userCount');
+        if (count) {
+            document.getElementById('reg-count').innerText = count;
+        }
 
         // Переключение вкладок
         window.showTab = function(tab) {
@@ -1125,9 +1324,10 @@
             canvas.height = window.innerHeight;
         });
 
-        // Запуск при загрузке
+        // Запуск
         window.addEventListener('load', function() {
             console.log('Страница загружена');
+            checkConsent();
             autoLogin();
         });
     </script>
