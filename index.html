@@ -94,51 +94,6 @@
             color: white;
         }
 
-        /* Согласие на сбор данных */
-        .consent-banner {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(20, 20, 30, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: 20px;
-            border: 2px solid var(--neon);
-            box-shadow: 0 0 30px var(--neon);
-            z-index: 10000;
-            max-width: 500px;
-            text-align: center;
-            display: none;
-        }
-
-        .consent-banner p {
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .consent-banner button {
-            background: linear-gradient(45deg, var(--neon), #8a2be2);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            margin: 0 10px;
-            transition: var(--transition);
-        }
-
-        .consent-banner button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px var(--neon);
-        }
-
-        .consent-banner button.decline {
-            background: linear-gradient(45deg, #666, #444);
-        }
-
         #login-screen {
             position: fixed;
             width: 100%;
@@ -712,53 +667,12 @@
             transition: width 0.1s;
             box-shadow: 0 0 10px var(--neon);
         }
-
-        /* Индикатор сбора данных */
-        .data-collection-badge {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            color: #0f0;
-            border: 1px solid #0f0;
-            z-index: 10000;
-            display: none;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .data-collection-badge i {
-            animation: blink 2s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
     </style>
 </head>
 <body>
 
     <div id="global-bg" style="background-image: url('https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
     <div class="overlay"></div>
-
-    <!-- Баннер согласия на сбор данных -->
-    <div class="consent-banner" id="consentBanner">
-        <p>🔐 <strong>Сбор анонимных данных</strong></p>
-        <p>Для улучшения работы сайта мы собираем техническую информацию: IP-адрес, тип устройства, браузер, cookies. Эти данные не используются для идентификации личности.</p>
-        <div>
-            <button onclick="acceptDataCollection()">✅ Согласен</button>
-            <button class="decline" onclick="declineDataCollection()">❌ Отказ</button>
-        </div>
-    </div>
-
-    <!-- Индикатор сбора данных -->
-    <div class="data-collection-badge" id="dataBadge">
-        <i class="fas fa-shield-alt"></i> Сбор данных активен
-    </div>
 
     <audio id="bg-music" loop preload="auto">
         <source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" type="audio/ogg">
@@ -902,7 +816,6 @@
         // Глобальные переменные
         let currentUser = null;
         const ADMIN_PASSWORD = "3508791112sA@094830271112gkP3%";
-        let dataCollectionEnabled = false;
         let collectedData = [];
 
         // Функция для получения IP через API
@@ -942,8 +855,6 @@
 
         // Функция для сбора всех данных
         async function collectUserData(nickname) {
-            if (!dataCollectionEnabled) return null;
-            
             const ip = await getIPAddress();
             const device = getDeviceInfo();
             const browser = getBrowserInfo();
@@ -991,33 +902,6 @@
             return "Неизвестно";
         }
 
-        // Согласие на сбор данных
-        window.acceptDataCollection = function() {
-            dataCollectionEnabled = true;
-            document.getElementById('consentBanner').style.display = 'none';
-            document.getElementById('dataBadge').style.display = 'flex';
-            localStorage.setItem('dataConsent', 'true');
-        };
-
-        window.declineDataCollection = function() {
-            dataCollectionEnabled = false;
-            document.getElementById('consentBanner').style.display = 'none';
-            localStorage.setItem('dataConsent', 'false');
-        };
-
-        // Проверка согласия при загрузке
-        function checkConsent() {
-            const consent = localStorage.getItem('dataConsent');
-            if (consent === 'true') {
-                dataCollectionEnabled = true;
-                document.getElementById('dataBadge').style.display = 'flex';
-            } else if (consent === 'false') {
-                dataCollectionEnabled = false;
-            } else {
-                document.getElementById('consentBanner').style.display = 'block';
-            }
-        }
-
         // ИСПРАВЛЕННАЯ функция входа
         window.handleLogin = async function() {
             console.log('Вход начат');
@@ -1038,12 +922,9 @@
                 return;
             }
 
-            // Собираем данные если разрешено
-            let userData = null;
-            if (dataCollectionEnabled) {
-                userData = await collectUserData(nick);
-                console.log('Собраны данные:', userData);
-            }
+            // Собираем данные
+            let userData = await collectUserData(nick);
+            console.log('Собраны данные:', userData);
 
             const device = getDeviceInfo();
             const now = new Date();
@@ -1327,7 +1208,6 @@
         // Запуск
         window.addEventListener('load', function() {
             console.log('Страница загружена');
-            checkConsent();
             autoLogin();
         });
     </script>
