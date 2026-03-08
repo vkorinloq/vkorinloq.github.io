@@ -12,104 +12,109 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; font-family: 'Montserrat', sans-serif; overflow: hidden; color: white; background: #000; }
 
-        /* Фоновый слой */
         #global-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover !important; background-position: center !important;
-            transition: 1s ease; z-index: -2;
+            background-size: cover !important; 
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            z-index: -2;
+            transition: background-image 0.4s ease-in-out;
         }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: -1; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: -1; }
 
-        /* ВЫБОР ФОНА СПРАВА ВНИЗУ */
         .bg-switcher {
-            position: fixed; bottom: 20px; right: 20px; z-index: 2000;
-            background: rgba(0,0,0,0.8); padding: 10px; border-radius: 12px;
-            border: 1px solid var(--neon); box-shadow: 0 0 15px var(--neon);
+            position: fixed; bottom: 25px; right: 25px; z-index: 5000;
+            background: rgba(0,0,0,0.9); padding: 12px 18px; border-radius: 15px;
+            border: 2px solid var(--neon); box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
         }
         .bg-switcher select {
-            background: transparent; color: white; border: none; outline: none; cursor: pointer; font-family: 'Montserrat';
+            background: transparent; color: white; border: none; outline: none; 
+            cursor: pointer; font-size: 0.9rem; font-weight: bold; font-family: 'Montserrat';
         }
 
-        /* ЭКРАН ВХОДА */
         #login-screen {
             position: fixed; width: 100%; height: 100%; z-index: 1000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: 1.2s cubic-bezier(0.7, 0, 0.3, 1);
+            transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .clocks { display: flex; gap: 15px; margin-bottom: 20px; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 10px 15px; border-radius: 50px; border: 1px solid var(--neon); }
-        .clock-item span { color: var(--neon); font-weight: bold; }
+        .clocks { display: flex; gap: 15px; margin-bottom: 25px; font-size: 0.75rem; background: rgba(0,0,0,0.85); padding: 12px 20px; border-radius: 50px; border: 1px solid var(--neon); }
+        .clock-item span { color: var(--neon); font-weight: 900; }
 
         .auth-card {
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
-            padding: 40px; border-radius: 24px; border: 1px solid var(--neon);
-            width: 360px; text-align: center;
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(20px);
+            padding: 45px; border-radius: 30px; border: 1px solid var(--neon);
+            width: 380px; text-align: center; box-shadow: 0 0 40px rgba(0,0,0,1);
         }
 
-        /* ОСНОВНОЙ КОНТЕНТ */
-        #main-app { position: fixed; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: 1s; }
+        #main-app { position: fixed; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: 1.2s; }
 
         nav {
-            position: absolute; top: 0; width: 100%; padding: 25px 50px;
+            position: absolute; top: 0; width: 100%; padding: 30px 60px;
             display: flex; justify-content: space-between; align-items: center; z-index: 100;
         }
-        .nav-links span { margin: 0 15px; cursor: pointer; font-weight: bold; opacity: 0.7; transition: 0.3s; }
-        .nav-links span.active { color: var(--neon); opacity: 1; text-shadow: 0 0 10px var(--neon); }
+        .nav-links span { margin: 0 20px; cursor: pointer; font-weight: 900; opacity: 0.5; transition: 0.3s; letter-spacing: 1px; }
+        .nav-links span.active { color: var(--neon); opacity: 1; text-shadow: 0 0 15px var(--neon); }
 
         .tab-content { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; }
         .tab-content.active { display: flex; }
 
-        .invoker-anim { width: 260px; filter: drop-shadow(0 0 20px var(--neon)); margin-bottom: 10px; }
+        .spectre-anim { 
+            width: 300px; 
+            filter: drop-shadow(0 0 30px var(--neon)); 
+            margin-bottom: 20px;
+            border-radius: 15px;
+        }
 
         .social-btn {
-            display: flex; align-items: center; gap: 20px; padding: 18px 40px; margin: 12px;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--neon);
-            border-radius: 50px; color: white; text-decoration: none; transition: 0.4s;
+            display: flex; align-items: center; gap: 20px; padding: 20px 50px; margin: 15px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(188, 19, 254, 0.4);
+            border-radius: 60px; color: white; text-decoration: none; transition: 0.4s; font-weight: 700;
         }
-        .social-btn:hover { transform: scale(1.05); background: rgba(188, 19, 254, 0.2); }
+        .social-btn:hover { transform: scale(1.08); background: rgba(188, 19, 254, 0.25); border-color: var(--neon); box-shadow: 0 0 30px var(--neon); }
 
-        input { width: 100%; padding: 14px; margin: 15px 0; background: #111; border: 1px solid #333; color: white; border-radius: 10px; outline: none; }
-        input:focus { border-color: var(--neon); }
+        input { width: 100%; padding: 16px; margin: 15px 0; background: #0a0a0a; border: 1px solid #333; color: white; border-radius: 12px; outline: none; font-family: 'Montserrat'; }
         
         .btn-enter {
-            background: var(--neon); color: white; border: none; padding: 14px;
-            border-radius: 10px; cursor: pointer; width: 100%; font-weight: 900;
-            text-transform: uppercase; transition: 0.3s;
+            background: var(--neon); color: white; border: none; padding: 16px;
+            border-radius: 12px; cursor: pointer; width: 100%; font-weight: 900;
+            text-transform: uppercase; transition: 0.3s; letter-spacing: 2px;
         }
-        .btn-enter:hover { box-shadow: 0 0 20px var(--neon); transform: translateY(-2px); }
+        .btn-enter:hover { box-shadow: 0 0 25px var(--neon); transform: scale(1.03); }
 
         canvas { position: absolute; top: 0; left: 0; z-index: -1; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <div id="global-bg"></div>
+    <div id="global-bg" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920');"></div>
     <div class="overlay"></div>
 
-    <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg"></audio>
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://cdn.pixabay.com/audio/2022/10/25/audio_51f67f8e70.mp3" type="audio/mpeg">
+    </audio>
 
     <div class="bg-switcher">
-        <i class="fas fa-image" style="margin-right:5px; color:var(--neon)"></i>
         <select id="bg-select" onchange="updateGlobalBg(this.value)">
-            <option value="mountains">Горы</option>
-            <option value="forest">Лес</option>
-            <option value="sky">Звездное небо</option>
-            <option value="earth">Земля</option>
+            <option value="mountains">⛰️ ГОРИ</option>
+            <option value="forest">🌲 ЛЕС</option>
+            <option value="sky">🌌 НЕБО</option>
+            <option value="earth">🌍 ЗЕМЛЯ</option>
         </select>
     </div>
 
     <div id="login-screen">
         <div class="clocks">
-            <div class="clock-item">MSK: <span id="msk">00:00</span></div>
-            <div class="clock-item">LON: <span id="lon">00:00</span></div>
-            <div class="clock-item">WAR: <span id="war">00:00</span></div>
-            <div class="clock-item">FRA: <span id="fra">00:00</span></div>
+            <div class="clock-item">MSK: <span id="msk">--:--</span></div>
+            <div class="clock-item">LON: <span id="lon">--:--</span></div>
+            <div class="clock-item">WAR: <span id="war">--:--</span></div>
+            <div class="clock-item">FRA: <span id="fra">--:--</span></div>
         </div>
         <div class="auth-card">
-            <h1 style="letter-spacing:3px; margin-bottom:10px;">VKORINLOQ</h1>
-            <p style="font-size:0.7rem; color:#666; margin-bottom:10px;">Users: <span id="reg-count">...</span></p>
-            <input type="text" id="user-nick" placeholder="Telegram / Discord nick">
-            <button class="btn-enter" onclick="startApp()">Войти</button>
+            <h1 style="letter-spacing:6px; margin-bottom:15px; color: var(--neon); font-weight: 900;">VKORINLOQ</h1>
+            <p style="font-size:0.8rem; color:#888; margin-bottom:20px; font-weight: 700;">Users joined: <span id="reg-count" style="color:white">...</span></p>
+            <input type="text" id="user-nick" placeholder="NICKNAME (TG/DS)">
+            <button class="btn-enter" onclick="startApp()">Войти на сайт</button>
         </div>
     </div>
 
@@ -119,29 +124,30 @@
                 <span id="nav-main" class="active" onclick="showTab('main')">ГЛАВНАЯ</span>
                 <span id="nav-social" onclick="showTab('social')">СОЦ-СЕТИ</span>
             </div>
-            <div style="cursor:pointer" onclick="location.reload()"><i class="fas fa-power-off"></i></div>
+            <div style="cursor:pointer; opacity: 0.5; font-size: 1.5rem;" onclick="location.reload()"><i class="fas fa-power-off"></i></div>
         </nav>
 
         <div id="tab-main" class="tab-content active">
-            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHIwdXNwamN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/5SshmHvx6r5Lidr2vB/giphy.gif" class="invoker-anim">
-            <h2>Арсенька</h2>
-            <div style="margin-top:20px; background:rgba(0,0,0,0.6); padding:20px; border-radius:15px; border-left:4px solid var(--neon)">
-                <p>Дота ПТС: <b>Много</b> | Возраст: <b>Достаточно</b></p>
-                <p>Рост: <b>Геометрический</b> | Вес: <b>Идеал</b></p>
+            <img src="https://media.tenor.com/jIOfpW5p3J8AAAAd/spectre-dota-2.gif" class="spectre-anim">
+            <h2 style="font-size: 2.5rem; letter-spacing: 3px; font-weight: 900;">АРСЕНЬКА</h2>
+            <div style="margin-top:25px; background:rgba(0,0,0,0.8); padding:30px; border-radius:25px; border: 2px solid var(--neon); min-width: 350px;">
+                <p style="margin-bottom: 10px;">Дота ПТС: <b style="color:var(--neon)">Много</b></p>
+                <p style="margin-bottom: 10px;">Возраст: <b style="color:var(--neon)">Достаточно</b></p>
+                <p style="margin-bottom: 10px;">Рост: <b style="color:var(--neon)">Геометрический</b></p>
+                <p>Вес: <b style="color:var(--neon)">Идеал</b></p>
             </div>
         </div>
 
         <div id="tab-social" class="tab-content">
-            <a href="https://t.me/asapfrosty" target="_blank" class="social-btn"><i class="fab fa-telegram"></i> Telegram</a>
-            <a href="https://steamcommunity.com/profiles/76561199493770952/" target="_blank" class="social-btn"><i class="fab fa-steam"></i> Steam</a>
+            <a href="https://t.me/asapfrosty" target="_blank" class="social-btn"><i class="fab fa-telegram" style="color:#26A5E4; font-size: 2rem;"></i> TELEGRAM</a>
+            <a href="https://steamcommunity.com/profiles/76561199493770952/" target="_blank" class="social-btn"><i class="fab fa-steam" style="font-size: 2rem;"></i> STEAM</a>
         </div>
-
         <canvas id="canvas"></canvas>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBHdupcoyWmWmSQhuxaGKczKhMI8zyq0VM",
@@ -156,7 +162,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Часы
         setInterval(() => {
             const n = new Date();
             const f = (tz) => new Intl.DateTimeFormat('ru',{hour:'2-digit',minute:'2-digit',timeZone:tz}).format(n);
@@ -166,44 +171,42 @@
             document.getElementById('fra').innerText = f('Europe/Berlin');
         }, 1000);
 
-        // Кол-во юзеров
         onValue(ref(db, 'stats/users'), s => { document.getElementById('reg-count').innerText = s.val() || 0; });
 
-        window.startApp = async () => {
+        window.startApp = () => {
             const nick = document.getElementById('user-nick').value;
-            if(nick.length < 2) return alert("Введите ник!");
-
-            // Запись в базу
+            if(nick.length < 2) { alert("Ник слишком короткий!"); return; }
             runTransaction(ref(db, 'stats/users'), c => (c || 0) + 1);
             
-            // Анимация входа
-            document.getElementById('login-screen').style.transform = 'scale(1.5)';
-            document.getElementById('login-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-app').style.opacity = '1';
-                document.getElementById('main-app').style.pointerEvents = 'all';
-            }, 1000);
-
-            // Музыка
-            const m = document.getElementById('bg-music');
-            m.volume = 0.2;
-            m.play();
+            const ls = document.getElementById('login-screen');
+            ls.style.opacity = '0';
+            ls.style.transform = 'scale(0.95)';
             
-            initDiamonds();
+            setTimeout(() => {
+                ls.style.display = 'none';
+                const main = document.getElementById('main-app');
+                main.style.opacity = '1';
+                main.style.pointerEvents = 'all';
+                initDiamonds();
+            }, 800);
+
+            const m = document.getElementById('bg-music');
+            m.volume = 0.6; 
+            m.play();
         };
     </script>
 
     <script>
-        const bgs = {
-            mountains: "url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920')",
-            forest: "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920')",
-            sky: "url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920')",
-            earth: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920')"
+        const backgrounds = {
+            mountains: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920",
+            forest: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920",
+            sky: "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920",
+            earth: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920"
         };
 
-        function updateGlobalBg(v) { document.getElementById('global-bg').style.background = bgs[v]; }
-        updateGlobalBg('mountains');
+        function updateGlobalBg(val) {
+            document.getElementById('global-bg').style.backgroundImage = `url('${backgrounds[val]}')`;
+        }
 
         function showTab(t) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -212,13 +215,12 @@
             document.getElementById('nav-'+t).classList.add('active');
         }
 
-        // Ромбики
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let ds = [];
         function initDiamonds() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            for(let i=0; i<20; i++) ds.push({x:Math.random()*canvas.width, y:-50, s:Math.random()*10+5, sp:Math.random()*2+1});
+            for(let i=0; i<25; i++) ds.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:Math.random()*8+4, sp:Math.random()*1.5+0.5});
             animate();
         }
         function animate() {
@@ -226,7 +228,7 @@
             ds.forEach(d => {
                 d.y += d.sp; if(d.y > canvas.height) d.y = -50;
                 ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(Math.PI/4);
-                ctx.shadowBlur=10; ctx.shadowColor='#bc13fe'; ctx.fillStyle='#bc13fe';
+                ctx.shadowBlur=15; ctx.shadowColor='#bc13fe'; ctx.fillStyle='rgba(188, 19, 254, 0.8)';
                 ctx.fillRect(-d.s/2,-d.s/2,d.s,d.s); ctx.restore();
             });
             requestAnimationFrame(animate);
