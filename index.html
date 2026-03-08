@@ -8,23 +8,33 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --neon: #bc13fe; --bg-overlay: rgba(0,0,0,0.6); }
+        :root { --neon: #bc13fe; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; font-family: 'Montserrat', sans-serif; overflow: hidden; color: white; background: #000; }
 
-        /* Общий фон для всего сайта */
-        .bg-layer {
+        /* Фоновый слой */
+        #global-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover !important; background-position: center !important;
-            transition: background 0.8s ease; z-index: -2;
+            transition: 1s ease; z-index: -2;
+        }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: -1; }
+
+        /* ВЫБОР ФОНА СПРАВА ВНИЗУ */
+        .bg-switcher {
+            position: fixed; bottom: 20px; right: 20px; z-index: 2000;
+            background: rgba(0,0,0,0.8); padding: 10px; border-radius: 12px;
+            border: 1px solid var(--neon); box-shadow: 0 0 15px var(--neon);
+        }
+        .bg-switcher select {
+            background: transparent; color: white; border: none; outline: none; cursor: pointer; font-family: 'Montserrat';
         }
 
         /* ЭКРАН ВХОДА */
         #login-screen {
             position: fixed; width: 100%; height: 100%; z-index: 1000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: 1s cubic-bezier(0.65, 0, 0.35, 1);
-            background: rgba(0,0,0,0.5);
+            transition: 1.2s cubic-bezier(0.7, 0, 0.3, 1);
         }
 
         .clocks { display: flex; gap: 15px; margin-bottom: 20px; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 10px 15px; border-radius: 50px; border: 1px solid var(--neon); }
@@ -32,57 +42,61 @@
 
         .auth-card {
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
-            padding: 35px; border-radius: 20px; border: 1px solid var(--neon);
-            width: 380px; text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.3);
+            padding: 40px; border-radius: 24px; border: 1px solid var(--neon);
+            width: 360px; text-align: center;
         }
 
         /* ОСНОВНОЙ КОНТЕНТ */
-        #main-app {
-            position: fixed; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: 1s;
-        }
+        #main-app { position: fixed; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: 1s; }
 
         nav {
             position: absolute; top: 0; width: 100%; padding: 25px 50px;
             display: flex; justify-content: space-between; align-items: center; z-index: 100;
         }
-        .nav-links span { margin: 0 15px; cursor: pointer; font-weight: bold; transition: 0.3s; opacity: 0.7; }
-        .nav-links span:hover, .nav-links span.active { color: var(--neon); opacity: 1; text-shadow: 0 0 10px var(--neon); }
-        .user-controls i { margin-left: 20px; cursor: pointer; font-size: 1.3rem; transition: 0.3s; }
+        .nav-links span { margin: 0 15px; cursor: pointer; font-weight: bold; opacity: 0.7; transition: 0.3s; }
+        .nav-links span.active { color: var(--neon); opacity: 1; text-shadow: 0 0 10px var(--neon); }
 
-        .tab-content { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--bg-overlay); }
+        .tab-content { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; }
         .tab-content.active { display: flex; }
 
-        .invoker-anim { width: 280px; filter: drop-shadow(0 0 20px var(--neon)); margin-bottom: 10px; }
+        .invoker-anim { width: 260px; filter: drop-shadow(0 0 20px var(--neon)); margin-bottom: 10px; }
 
         .social-btn {
             display: flex; align-items: center; gap: 20px; padding: 18px 40px; margin: 12px;
             background: rgba(255,255,255,0.05); border: 1px solid var(--neon);
-            border-radius: 50px; color: white; text-decoration: none; transition: 0.4s; font-weight: bold;
+            border-radius: 50px; color: white; text-decoration: none; transition: 0.4s;
         }
-        .social-btn:hover { transform: scale(1.05); background: rgba(188, 19, 254, 0.2); box-shadow: 0 0 30px var(--neon); }
+        .social-btn:hover { transform: scale(1.05); background: rgba(188, 19, 254, 0.2); }
 
-        /* Профиль */
-        #profile-modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(10, 10, 10, 0.98); border: 1px solid var(--neon);
-            padding: 30px; border-radius: 20px; z-index: 2000; display: none; width: 340px;
+        input { width: 100%; padding: 14px; margin: 15px 0; background: #111; border: 1px solid #333; color: white; border-radius: 10px; outline: none; }
+        input:focus { border-color: var(--neon); }
+        
+        .btn-enter {
+            background: var(--neon); color: white; border: none; padding: 14px;
+            border-radius: 10px; cursor: pointer; width: 100%; font-weight: 900;
+            text-transform: uppercase; transition: 0.3s;
         }
-        .modal-active #profile-modal { display: block; }
+        .btn-enter:hover { box-shadow: 0 0 20px var(--neon); transform: translateY(-2px); }
 
-        input, select { width: 100%; padding: 12px; margin: 10px 0; background: #111; border: 1px solid #333; color: white; border-radius: 8px; outline: none; }
-        input:focus, select:focus { border-color: var(--neon); }
-        .btn { background: var(--neon); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; }
-        .btn:hover { background: #9d10d6; box-shadow: 0 0 15px var(--neon); }
-
-        canvas { position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none; }
+        canvas { position: absolute; top: 0; left: 0; z-index: -1; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <div id="global-bg" class="bg-layer"></div>
+    <div id="global-bg"></div>
+    <div class="overlay"></div>
 
-    <iframe id="music-player" style="display:none" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
-    <audio id="local-audio" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg"></audio>
+    <audio id="bg-music" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg"></audio>
+
+    <div class="bg-switcher">
+        <i class="fas fa-image" style="margin-right:5px; color:var(--neon)"></i>
+        <select id="bg-select" onchange="updateGlobalBg(this.value)">
+            <option value="mountains">Горы</option>
+            <option value="forest">Лес</option>
+            <option value="sky">Звездное небо</option>
+            <option value="earth">Земля</option>
+        </select>
+    </div>
 
     <div id="login-screen">
         <div class="clocks">
@@ -92,16 +106,10 @@
             <div class="clock-item">FRA: <span id="fra">00:00</span></div>
         </div>
         <div class="auth-card">
-            <h1 style="margin-bottom:20px; font-size: 1.5rem;">VKORINLOQ'S LINKS</h1>
-            <p style="font-size: 0.7rem; margin-bottom: 20px; color: #888;">Пользователей в базе: <span id="reg-count-login" style="color:var(--neon)">...</span></p>
-            
-            <select id="login-type">
-                <option value="tg">Telegram (@username)</option>
-                <option value="ds">Discord (username)</option>
-            </select>
-            <input type="text" id="username-input" placeholder="Введите ваш ник...">
-            
-            <button class="btn" onclick="simpleLogin()">ВОЙТИ</button>
+            <h1 style="letter-spacing:3px; margin-bottom:10px;">VKORINLOQ</h1>
+            <p style="font-size:0.7rem; color:#666; margin-bottom:10px;">Users: <span id="reg-count">...</span></p>
+            <input type="text" id="user-nick" placeholder="Telegram / Discord nick">
+            <button class="btn-enter" onclick="startApp()">Войти</button>
         </div>
     </div>
 
@@ -111,60 +119,38 @@
                 <span id="nav-main" class="active" onclick="showTab('main')">ГЛАВНАЯ</span>
                 <span id="nav-social" onclick="showTab('social')">СОЦ-СЕТИ</span>
             </div>
-            <div class="user-controls">
-                <i class="fas fa-palette" onclick="toggleProfile()" title="Смена фона"></i>
-                <i class="fas fa-sign-out-alt" onclick="location.reload()" title="Выйти"></i>
-            </div>
+            <div style="cursor:pointer" onclick="location.reload()"><i class="fas fa-power-off"></i></div>
         </nav>
 
         <div id="tab-main" class="tab-content active">
             <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHIwdXNwamN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/5SshmHvx6r5Lidr2vB/giphy.gif" class="invoker-anim">
-            <h2 style="font-size: 2rem;">Привет, это сайт Арсеньки</h2>
-            <div style="margin-top:25px; background: rgba(0,0,0,0.7); padding: 25px; border-radius: 20px; border: 1px solid rgba(188,19,254,0.3);">
-                <p>ПТС в доте: <b style="color:var(--neon)">Много</b></p>
-                <p>Возраст: <b style="color:var(--neon)">Достаточно</b></p>
-                <p>Рост: <b style="color:var(--neon)">Геометрический</b></p>
-                <p>Вес: <b style="color:var(--neon)">Идеальный</b></p>
+            <h2>Арсенька</h2>
+            <div style="margin-top:20px; background:rgba(0,0,0,0.6); padding:20px; border-radius:15px; border-left:4px solid var(--neon)">
+                <p>Дота ПТС: <b>Много</b> | Возраст: <b>Достаточно</b></p>
+                <p>Рост: <b>Геометрический</b> | Вес: <b>Идеал</b></p>
             </div>
         </div>
 
         <div id="tab-social" class="tab-content">
-            <a href="https://t.me/asapfrosty" target="_blank" class="social-btn">
-                <i class="fab fa-telegram" style="font-size:2.5rem; color:#26A5E4;"></i> Telegram: @asapfrosty
-            </a>
-            <a href="https://steamcommunity.com/profiles/76561199493770952/" target="_blank" class="social-btn">
-                <i class="fab fa-steam" style="font-size:2.5rem; color:#fff;"></i> Steam Profile
-            </a>
+            <a href="https://t.me/asapfrosty" target="_blank" class="social-btn"><i class="fab fa-telegram"></i> Telegram</a>
+            <a href="https://steamcommunity.com/profiles/76561199493770952/" target="_blank" class="social-btn"><i class="fab fa-steam"></i> Steam</a>
         </div>
 
         <canvas id="canvas"></canvas>
     </div>
 
-    <div id="profile-modal">
-        <h3 style="text-align:center;">Настройки вида</h3>
-        <p style="font-size:0.8rem; margin-top:20px; color:#aaa;">Выбери атмосферу:</p>
-        <select id="bg-select" onchange="changeBg(this.value)">
-            <option value="mountains">Горы</option>
-            <option value="sea">Море</option>
-            <option value="forest">Лес</option>
-            <option value="sky">Ночное небо</option>
-            <option value="earth">Планета Земля</option>
-        </select>
-        <button class="btn" style="margin-top:20px;" onclick="toggleProfile()">Применить</button>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBHdupcoyWmWmSQhuxaGKczKhMI8zyq0VM",
             authDomain: "vkorinloqq.firebaseapp.com",
             projectId: "vkorinloqq",
+            databaseURL: "https://vkorinloqq-default-rtdb.firebaseio.com",
             storageBucket: "vkorinloqq.firebasestorage.app",
             messagingSenderId: "239986490775",
-            appId: "1:239986490775:web:1d6b7b132eb20db07058d2",
-            databaseURL: "https://vkorinloqq-default-rtdb.firebaseio.com"
+            appId: "1:239986490775:web:1d6b7b132eb20db07058d2"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -172,97 +158,79 @@
 
         // Часы
         setInterval(() => {
-            const now = new Date();
-            const opt = { hour: '2-digit', minute: '2-digit', timeZone: '' };
-            document.getElementById('msk').innerText = new Intl.DateTimeFormat('ru-RU', { ...opt, timeZone: 'Europe/Moscow' }).format(now);
-            document.getElementById('lon').innerText = new Intl.DateTimeFormat('ru-RU', { ...opt, timeZone: 'Europe/London' }).format(now);
-            document.getElementById('war').innerText = new Intl.DateTimeFormat('ru-RU', { ...opt, timeZone: 'Europe/Warsaw' }).format(now);
-            document.getElementById('fra').innerText = new Intl.DateTimeFormat('ru-RU', { ...opt, timeZone: 'Europe/Berlin' }).format(now);
+            const n = new Date();
+            const f = (tz) => new Intl.DateTimeFormat('ru',{hour:'2-digit',minute:'2-digit',timeZone:tz}).format(n);
+            document.getElementById('msk').innerText = f('Europe/Moscow');
+            document.getElementById('lon').innerText = f('Europe/London');
+            document.getElementById('war').innerText = f('Europe/Warsaw');
+            document.getElementById('fra').innerText = f('Europe/Berlin');
         }, 1000);
 
-        // Счетчик
-        onValue(ref(db, 'stats/users'), (s) => {
-            document.getElementById('reg-count-login').innerText = s.val() || 0;
-        });
+        // Кол-во юзеров
+        onValue(ref(db, 'stats/users'), s => { document.getElementById('reg-count').innerText = s.val() || 0; });
 
-        window.simpleLogin = async () => {
-            const nick = document.getElementById('username-input').value;
-            if(nick.length < 3) return alert("Введите корректный ник!");
+        window.startApp = async () => {
+            const nick = document.getElementById('user-nick').value;
+            if(nick.length < 2) return alert("Введите ник!");
 
-            // Записываем визит в базу
-            const userRef = ref(db, 'users/' + nick.replace(/[.#$[\]]/g, "_"));
-            const snapshot = await get(userRef);
+            // Запись в базу
+            runTransaction(ref(db, 'stats/users'), c => (c || 0) + 1);
             
-            if (!snapshot.exists()) {
-                await set(userRef, { joined: new Date().toISOString() });
-                await runTransaction(ref(db, 'stats/users'), c => (c || 0) + 1);
-            }
+            // Анимация входа
+            document.getElementById('login-screen').style.transform = 'scale(1.5)';
+            document.getElementById('login-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-app').style.opacity = '1';
+                document.getElementById('main-app').style.pointerEvents = 'all';
+            }, 1000);
 
-            // Переход
-            document.getElementById('login-screen').style.transform = 'translateY(-100%)';
-            document.getElementById('main-app').style.opacity = '1';
-            document.getElementById('main-app').style.pointerEvents = 'all';
+            // Музыка
+            const m = document.getElementById('bg-music');
+            m.volume = 0.2;
+            m.play();
             
-            // Запуск музыки
-            const audio = document.getElementById('local-audio');
-            audio.volume = 0.15;
-            audio.play().catch(() => console.log("Музыка ждет клика"));
-
             initDiamonds();
         };
     </script>
 
     <script>
-        const backgrounds = {
-            mountains: "url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80')",
-            sea: "url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1920&q=80')",
-            forest: "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=80')",
-            sky: "url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=1920&q=80')",
-            earth: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80')"
+        const bgs = {
+            mountains: "url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920')",
+            forest: "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920')",
+            sky: "url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920')",
+            earth: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920')"
         };
 
-        function changeBg(val) {
-            document.getElementById('global-bg').style.background = backgrounds[val];
-        }
+        function updateGlobalBg(v) { document.getElementById('global-bg').style.background = bgs[v]; }
+        updateGlobalBg('mountains');
 
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        function showTab(t) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav-links span').forEach(s => s.classList.remove('active'));
-            document.getElementById('tab-' + tab).classList.add('active');
-            document.getElementById('nav-' + tab).classList.add('active');
+            document.getElementById('tab-'+t).classList.add('active');
+            document.getElementById('nav-'+t).classList.add('active');
         }
 
-        function toggleProfile() { document.body.classList.toggle('modal-active'); }
-
-        // Анимация ромбиков
+        // Ромбики
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        let diamonds = [];
+        let ds = [];
         function initDiamonds() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            for(let i=0; i<20; i++) diamonds.push({
-                x: Math.random()*canvas.width, y: -50, s: Math.random()*12+4, sp: Math.random()*1.5+0.5, h: []
-            });
+            for(let i=0; i<20; i++) ds.push({x:Math.random()*canvas.width, y:-50, s:Math.random()*10+5, sp:Math.random()*2+1});
             animate();
         }
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            diamonds.forEach(d => {
-                d.h.push({x: d.x, y: d.y}); if(d.h.length > 10) d.h.shift();
-                d.h.forEach((pos, i) => {
-                    ctx.save(); ctx.translate(pos.x, pos.y); ctx.rotate(Math.PI/4);
-                    ctx.fillStyle = `rgba(188,19,254,${i/d.h.length*0.15})`;
-                    ctx.fillRect(-d.s/2,-d.s/2,d.s,d.s); ctx.restore();
-                });
-                d.y += d.sp; if(d.y > canvas.height+50) d.y = -50;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ds.forEach(d => {
+                d.y += d.sp; if(d.y > canvas.height) d.y = -50;
                 ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(Math.PI/4);
                 ctx.shadowBlur=10; ctx.shadowColor='#bc13fe'; ctx.fillStyle='#bc13fe';
                 ctx.fillRect(-d.s/2,-d.s/2,d.s,d.s); ctx.restore();
             });
             requestAnimationFrame(animate);
         }
-        
-        changeBg('mountains');
     </script>
 </body>
 </html>
