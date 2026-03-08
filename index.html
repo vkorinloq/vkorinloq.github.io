@@ -8,83 +8,81 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --neon: #bc13fe; --bg: #0a0a0a; }
+        :root { --neon: #bc13fe; --bg-overlay: rgba(0,0,0,0.6); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; font-family: 'Montserrat', sans-serif; overflow: hidden; background: var(--bg); color: white; }
+        body, html { height: 100%; font-family: 'Montserrat', sans-serif; overflow: hidden; color: white; background: #000; }
+
+        /* Общий фон для всего сайта */
+        .bg-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover !important; background-position: center !important;
+            transition: background 0.8s ease; z-index: -2;
+        }
 
         /* ЭКРАН ВХОДА */
         #login-screen {
             position: fixed; width: 100%; height: 100%; z-index: 1000;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80') center/cover;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: 1s cubic-bezier(0.65, 0, 0.35, 1);
+            background: rgba(0,0,0,0.5);
         }
 
-        .clocks { display: flex; gap: 20px; margin-bottom: 20px; font-size: 0.8rem; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--neon); }
+        .clocks { display: flex; gap: 15px; margin-bottom: 20px; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 10px 15px; border-radius: 50px; border: 1px solid var(--neon); }
         .clock-item span { color: var(--neon); font-weight: bold; }
 
         .auth-card {
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
-            padding: 30px; border-radius: 20px; border: 1px solid var(--neon);
-            width: 350px; text-align: center;
+            padding: 35px; border-radius: 20px; border: 1px solid var(--neon);
+            width: 380px; text-align: center; box-shadow: 0 0 50px rgba(188, 19, 254, 0.3);
         }
 
         /* ОСНОВНОЙ КОНТЕНТ */
         #main-app {
             position: fixed; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: 1s;
-            background-size: cover !important; background-position: center !important;
         }
 
-        /* Навигация */
         nav {
-            position: absolute; top: 0; width: 100%; padding: 20px 50px;
+            position: absolute; top: 0; width: 100%; padding: 25px 50px;
             display: flex; justify-content: space-between; align-items: center; z-index: 100;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
         }
-        .nav-links span { margin: 0 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .nav-links span:hover, .nav-links span.active { color: var(--neon); text-shadow: 0 0 10px var(--neon); }
-        .user-controls i { margin-left: 20px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; }
-        .user-controls i:hover { color: var(--neon); }
+        .nav-links span { margin: 0 15px; cursor: pointer; font-weight: bold; transition: 0.3s; opacity: 0.7; }
+        .nav-links span:hover, .nav-links span.active { color: var(--neon); opacity: 1; text-shadow: 0 0 10px var(--neon); }
+        .user-controls i { margin-left: 20px; cursor: pointer; font-size: 1.3rem; transition: 0.3s; }
 
-        /* Вкладки */
-        .tab-content {
-            display: none; width: 100%; height: 100%; 
-            flex-direction: column; justify-content: center; align-items: center; text-align: center;
-        }
+        .tab-content { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--bg-overlay); }
         .tab-content.active { display: flex; }
 
-        /* Инвокер */
-        .invoker-anim { width: 300px; filter: drop-shadow(0 0 20px var(--neon)); margin-bottom: 20px; }
+        .invoker-anim { width: 280px; filter: drop-shadow(0 0 20px var(--neon)); margin-bottom: 10px; }
 
-        /* Кнопки Соцсетей */
         .social-btn {
-            display: flex; align-items: center; gap: 15px; padding: 15px 40px; margin: 10px;
+            display: flex; align-items: center; gap: 20px; padding: 18px 40px; margin: 12px;
             background: rgba(255,255,255,0.05); border: 1px solid var(--neon);
-            border-radius: 50px; color: white; text-decoration: none; transition: 0.4s;
+            border-radius: 50px; color: white; text-decoration: none; transition: 0.4s; font-weight: bold;
         }
-        .social-btn:hover { transform: scale(1.1); background: rgba(188, 19, 254, 0.2); box-shadow: 0 0 30px var(--neon); }
+        .social-btn:hover { transform: scale(1.05); background: rgba(188, 19, 254, 0.2); box-shadow: 0 0 30px var(--neon); }
 
-        /* Окно Профиля */
+        /* Профиль */
         #profile-modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            background: rgba(10, 10, 10, 0.95); border: 1px solid var(--neon);
-            padding: 30px; border-radius: 20px; z-index: 2000; display: none; width: 320px;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(10, 10, 10, 0.98); border: 1px solid var(--neon);
+            padding: 30px; border-radius: 20px; z-index: 2000; display: none; width: 340px;
         }
-        .modal-active #profile-modal { display: block; transform: translate(-50%, -50%) scale(1); }
-        .profile-info { text-align: left; margin-bottom: 20px; }
-        .pass-group { display: flex; align-items: center; gap: 10px; }
-        
-        /* Стили кнопок и инпутов */
-        input { width: 100%; padding: 10px; margin: 10px 0; background: #111; border: 1px solid #333; color: white; border-radius: 5px; }
-        .btn { background: var(--neon); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; }
-        select { width: 100%; padding: 8px; background: #111; color: white; border: 1px solid var(--neon); margin-top: 10px; }
+        .modal-active #profile-modal { display: block; }
 
-        canvas { position: absolute; top: 0; left: 0; z-index: -1; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; background: #111; border: 1px solid #333; color: white; border-radius: 8px; outline: none; }
+        input:focus, select:focus { border-color: var(--neon); }
+        .btn { background: var(--neon); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; }
+        .btn:hover { background: #9d10d6; box-shadow: 0 0 15px var(--neon); }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none; }
     </style>
 </head>
-<body class="">
+<body>
 
-    <audio id="bg-music" loop><source src="https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" type="audio/mpeg"></audio>
+    <div id="global-bg" class="bg-layer"></div>
+
+    <iframe id="music-player" style="display:none" width="0" height="0" src="" frameborder="0" allow="autoplay"></iframe>
+    <audio id="local-audio" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg"></audio>
 
     <div id="login-screen">
         <div class="clocks">
@@ -93,13 +91,17 @@
             <div class="clock-item">WAR: <span id="war">00:00</span></div>
             <div class="clock-item">FRA: <span id="fra">00:00</span></div>
         </div>
-        <h1 style="margin-bottom:20px; text-transform:uppercase; letter-spacing:5px;">Vkorinloq's Links</h1>
         <div class="auth-card">
-            <p style="font-size: 0.8rem; margin-bottom: 15px;">Зареганы: <span id="reg-count-login" style="color:var(--neon)">...</span></p>
-            <input type="email" id="email" placeholder="Email@gmail.com">
-            <input type="password" id="password" placeholder="Пароль">
-            <button class="btn" onclick="handleAuth('login')">ВОЙТИ</button>
-            <button class="btn" style="margin-top:10px; background:transparent; border:1px solid var(--neon)" onclick="handleAuth('reg')">РЕГИСТРАЦИЯ</button>
+            <h1 style="margin-bottom:20px; font-size: 1.5rem;">VKORINLOQ'S LINKS</h1>
+            <p style="font-size: 0.7rem; margin-bottom: 20px; color: #888;">Пользователей в базе: <span id="reg-count-login" style="color:var(--neon)">...</span></p>
+            
+            <select id="login-type">
+                <option value="tg">Telegram (@username)</option>
+                <option value="ds">Discord (username)</option>
+            </select>
+            <input type="text" id="username-input" placeholder="Введите ваш ник...">
+            
+            <button class="btn" onclick="simpleLogin()">ВОЙТИ</button>
         </div>
     </div>
 
@@ -110,28 +112,28 @@
                 <span id="nav-social" onclick="showTab('social')">СОЦ-СЕТИ</span>
             </div>
             <div class="user-controls">
-                <i class="fas fa-user-circle" onclick="toggleProfile()" title="Профиль"></i>
-                <i class="fas fa-sign-out-alt" onclick="logout()" title="Выйти"></i>
+                <i class="fas fa-palette" onclick="toggleProfile()" title="Смена фона"></i>
+                <i class="fas fa-sign-out-alt" onclick="location.reload()" title="Выйти"></i>
             </div>
         </nav>
 
         <div id="tab-main" class="tab-content active">
-            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHIwdXNwamN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/5SshmHvx6r5Lidr2vB/giphy.gif" class="invoker-anim" alt="Invoker">
-            <h2>Привет, это сайт Арсеньки</h2>
-            <div style="margin-top:20px; line-height: 1.8; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 15px;">
-                <p>ПТС в доте: <b>Много</b></p>
-                <p>Возраст: <b>Достаточно</b></p>
-                <p>Рост: <b>Геометрический</b></p>
-                <p>Вес: <b>Идеальный</b></p>
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHIwdXNwamN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/5SshmHvx6r5Lidr2vB/giphy.gif" class="invoker-anim">
+            <h2 style="font-size: 2rem;">Привет, это сайт Арсеньки</h2>
+            <div style="margin-top:25px; background: rgba(0,0,0,0.7); padding: 25px; border-radius: 20px; border: 1px solid rgba(188,19,254,0.3);">
+                <p>ПТС в доте: <b style="color:var(--neon)">Много</b></p>
+                <p>Возраст: <b style="color:var(--neon)">Достаточно</b></p>
+                <p>Рост: <b style="color:var(--neon)">Геометрический</b></p>
+                <p>Вес: <b style="color:var(--neon)">Идеальный</b></p>
             </div>
         </div>
 
         <div id="tab-social" class="tab-content">
             <a href="https://t.me/asapfrosty" target="_blank" class="social-btn">
-                <i class="fab fa-telegram" style="font-size:2rem; color:#26A5E4;"></i> Telegram: @asapfrosty
+                <i class="fab fa-telegram" style="font-size:2.5rem; color:#26A5E4;"></i> Telegram: @asapfrosty
             </a>
             <a href="https://steamcommunity.com/profiles/76561199493770952/" target="_blank" class="social-btn">
-                <i class="fab fa-steam" style="font-size:2rem; color:#66c0f4;"></i> Steam Profile
+                <i class="fab fa-steam" style="font-size:2.5rem; color:#fff;"></i> Steam Profile
             </a>
         </div>
 
@@ -139,17 +141,8 @@
     </div>
 
     <div id="profile-modal">
-        <h3>Мой Профиль</h3>
-        <div class="profile-info" style="margin-top:15px;">
-            <p style="font-size:0.8rem; color:#777;">Email:</p>
-            <p id="p-email">загрузка...</p>
-            <p style="font-size:0.8rem; color:#777; margin-top:10px;">Пароль:</p>
-            <div class="pass-group">
-                <input type="password" id="p-pass" value="******" readonly style="margin:0;">
-                <i class="fas fa-eye" onmousedown="showPass()" onmouseup="hidePass()" style="cursor:pointer; color:var(--neon)"></i>
-            </div>
-        </div>
-        <p style="font-size:0.8rem; color:#777;">Выбор фона:</p>
+        <h3 style="text-align:center;">Настройки вида</h3>
+        <p style="font-size:0.8rem; margin-top:20px; color:#aaa;">Выбери атмосферу:</p>
         <select id="bg-select" onchange="changeBg(this.value)">
             <option value="mountains">Горы</option>
             <option value="sea">Море</option>
@@ -157,13 +150,12 @@
             <option value="sky">Ночное небо</option>
             <option value="earth">Планета Земля</option>
         </select>
-        <button class="btn" style="margin-top:20px;" onclick="toggleProfile()">Закрыть</button>
+        <button class="btn" style="margin-top:20px;" onclick="toggleProfile()">Применить</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, set, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBHdupcoyWmWmSQhuxaGKczKhMI8zyq0VM",
@@ -176,80 +168,51 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getDatabase(app);
 
         // Часы
         setInterval(() => {
             const now = new Date();
-            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            document.getElementById('msk').innerText = new Intl.DateTimeFormat('ru-RU', { ...options, timeZone: 'Europe/Moscow' }).format(now);
-            document.getElementById('lon').innerText = new Intl.DateTimeFormat('ru-RU', { ...options, timeZone: 'Europe/London' }).format(now);
-            document.getElementById('war').innerText = new Intl.DateTimeFormat('ru-RU', { ...options, timeZone: 'Europe/Warsaw' }).format(now);
-            document.getElementById('fra').innerText = new Intl.DateTimeFormat('ru-RU', { ...options, timeZone: 'Europe/Berlin' }).format(now);
+            const opt = { hour: '2-digit', minute: '2-digit', timeZone: '' };
+            document.getElementById('msk').innerText = new Intl.DateTimeFormat('ru-RU', { ...opt, timeZone: 'Europe/Moscow' }).format(now);
+            document.getElementById('lon').innerText = new Intl.DateTimeFormat('ru-RU', { ...opt, timeZone: 'Europe/London' }).format(now);
+            document.getElementById('war').innerText = new Intl.DateTimeFormat('ru-RU', { ...opt, timeZone: 'Europe/Warsaw' }).format(now);
+            document.getElementById('fra').innerText = new Intl.DateTimeFormat('ru-RU', { ...opt, timeZone: 'Europe/Berlin' }).format(now);
         }, 1000);
 
-        // Кол-во юзеров
+        // Счетчик
         onValue(ref(db, 'stats/users'), (s) => {
-            const count = s.val() || 0;
-            document.getElementById('reg-count-login').innerText = count;
+            document.getElementById('reg-count-login').innerText = s.val() || 0;
         });
 
-        // Авторизация
-        window.handleAuth = async (type) => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('password').value;
-            try {
-                if(type === 'reg') {
-                    await createUserWithEmailAndPassword(auth, e, p);
-                    runTransaction(ref(db, 'stats/users'), c => (c || 0) + 1);
-                    alert("Успешно зареган!");
-                } else {
-                    await signInWithEmailAndPassword(auth, e, p);
-                }
-            } catch (err) { alert(err.message); }
-        };
+        window.simpleLogin = async () => {
+            const nick = document.getElementById('username-input').value;
+            if(nick.length < 3) return alert("Введите корректный ник!");
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('login-screen').style.transform = 'translateY(-100%)';
-                document.getElementById('main-app').style.opacity = '1';
-                document.getElementById('main-app').style.pointerEvents = 'all';
-                document.getElementById('p-email').innerText = user.email;
-                window.tempPass = document.getElementById('password').value;
-                document.getElementById('bg-music').volume = 0.2;
-                document.getElementById('bg-music').play();
-                initDiamonds();
-            } else {
-                document.getElementById('login-screen').style.transform = 'translateY(0)';
-                document.getElementById('main-app').style.opacity = '0';
+            // Записываем визит в базу
+            const userRef = ref(db, 'users/' + nick.replace(/[.#$[\]]/g, "_"));
+            const snapshot = await get(userRef);
+            
+            if (!snapshot.exists()) {
+                await set(userRef, { joined: new Date().toISOString() });
+                await runTransaction(ref(db, 'stats/users'), c => (c || 0) + 1);
             }
-        });
 
-        window.logout = () => signOut(auth);
+            // Переход
+            document.getElementById('login-screen').style.transform = 'translateY(-100%)';
+            document.getElementById('main-app').style.opacity = '1';
+            document.getElementById('main-app').style.pointerEvents = 'all';
+            
+            // Запуск музыки
+            const audio = document.getElementById('local-audio');
+            audio.volume = 0.15;
+            audio.play().catch(() => console.log("Музыка ждет клика"));
+
+            initDiamonds();
+        };
     </script>
 
     <script>
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-links span').forEach(s => s.classList.remove('active'));
-            document.getElementById('tab-' + tab).classList.add('active');
-            document.getElementById('nav-' + tab).classList.add('active');
-        }
-
-        function toggleProfile() { document.body.classList.toggle('modal-active'); }
-        
-        function showPass() { 
-            const el = document.getElementById('p-pass');
-            el.type = 'text'; 
-            el.value = window.tempPass || "******";
-        }
-        function hidePass() { 
-            const el = document.getElementById('p-pass');
-            el.type = 'password'; 
-            el.value = "******";
-        }
-
         const backgrounds = {
             mountains: "url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80')",
             sea: "url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1920&q=80')",
@@ -259,38 +222,47 @@
         };
 
         function changeBg(val) {
-            document.getElementById('main-app').style.background = backgrounds[val];
+            document.getElementById('global-bg').style.background = backgrounds[val];
         }
 
-        // Ромбики (тот же код)
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-links span').forEach(s => s.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('nav-' + tab).classList.add('active');
+        }
+
+        function toggleProfile() { document.body.classList.toggle('modal-active'); }
+
+        // Анимация ромбиков
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let diamonds = [];
         function initDiamonds() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            for(let i=0; i<25; i++) diamonds.push({
-                x: Math.random()*canvas.width, y: -50, s: Math.random()*15+5, sp: Math.random()*2+1, h: []
+            for(let i=0; i<20; i++) diamonds.push({
+                x: Math.random()*canvas.width, y: -50, s: Math.random()*12+4, sp: Math.random()*1.5+0.5, h: []
             });
             animate();
         }
         function animate() {
-            ctx.fillStyle = 'rgba(10,10,10,0.2)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             diamonds.forEach(d => {
-                d.h.push({x: d.x, y: d.y}); if(d.h.length > 15) d.h.shift();
+                d.h.push({x: d.x, y: d.y}); if(d.h.length > 10) d.h.shift();
                 d.h.forEach((pos, i) => {
                     ctx.save(); ctx.translate(pos.x, pos.y); ctx.rotate(Math.PI/4);
-                    ctx.fillStyle = `rgba(188,19,254,${i/d.h.length*0.2})`;
+                    ctx.fillStyle = `rgba(188,19,254,${i/d.h.length*0.15})`;
                     ctx.fillRect(-d.s/2,-d.s/2,d.s,d.s); ctx.restore();
                 });
-                d.y += d.sp; if(d.y > canvas.height+50) { d.y = -50; d.x = Math.random()*canvas.width; }
+                d.y += d.sp; if(d.y > canvas.height+50) d.y = -50;
                 ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(Math.PI/4);
-                ctx.shadowBlur=15; ctx.shadowColor='#bc13fe'; ctx.fillStyle='#bc13fe';
+                ctx.shadowBlur=10; ctx.shadowColor='#bc13fe'; ctx.fillStyle='#bc13fe';
                 ctx.fillRect(-d.s/2,-d.s/2,d.s,d.s); ctx.restore();
             });
             requestAnimationFrame(animate);
         }
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-        changeBg('mountains'); // Стартовый фон
+        
+        changeBg('mountains');
     </script>
 </body>
 </html>
