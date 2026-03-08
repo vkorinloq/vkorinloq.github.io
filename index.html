@@ -4,270 +4,293 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vkorinloq's Links</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root {
-            --neon-purple: #bc13fe;
-            --dark-bg: #0a0a0a;
-        }
-
+        :root { --neon: #bc13fe; --bg: #0a0a0a; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; font-family: 'Montserrat', sans-serif; overflow: hidden; background: var(--dark-bg); }
+        body, html { height: 100%; font-family: 'Montserrat', sans-serif; overflow: hidden; background: var(--bg); color: white; }
 
-        /* ЭКРАН 1: ЛОГИН (ГОРЫ) */
+        /* ЭКРАН ВХОДА */
         #login-screen {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
-                        url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80') center/cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+            position: fixed; width: 100%; height: 100%; z-index: 1000;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80') center/cover;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: 1s cubic-bezier(0.65, 0, 0.35, 1);
         }
 
-        .site-title {
-            color: white;
-            font-size: clamp(2rem, 8vw, 4rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 2rem;
-            text-shadow: 0 0 20px rgba(188, 19, 254, 0.6);
-            letter-spacing: 5px;
-        }
+        .clocks { display: flex; gap: 20px; margin-bottom: 20px; font-size: 0.8rem; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--neon); }
+        .clock-item span { color: var(--neon); font-weight: bold; }
 
         .auth-card {
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            border-radius: 20px;
-            border: 1px solid var(--neon-purple);
-            width: 90%;
-            max-width: 400px;
-            color: white;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
+            padding: 30px; border-radius: 20px; border: 1px solid var(--neon);
+            width: 350px; text-align: center;
         }
 
-        .auth-tabs { display: flex; margin-bottom: 1.5rem; gap: 10px; }
-        .tab-btn { 
-            flex: 1; background: none; border: none; color: #888; 
-            cursor: pointer; padding: 10px; font-weight: bold; border-bottom: 2px solid transparent;
-        }
-        .tab-btn.active { color: var(--neon-purple); border-bottom: 2px solid var(--neon-purple); }
-
-        input {
-            width: 100%; padding: 12px; margin: 8px 0;
-            background: rgba(255,255,255,0.1); border: 1px solid #444;
-            border-radius: 8px; color: white; outline: none;
-        }
-        input:focus { border-color: var(--neon-purple); }
-
-        .main-btn {
-            width: 100%; padding: 12px; margin-top: 15px;
-            background: var(--neon-purple); border: none; border-radius: 8px;
-            color: white; font-weight: bold; cursor: pointer;
-            transition: 0.3s;
-        }
-        .main-btn:hover { background: #9d10d6; box-shadow: 0 0 15px var(--neon-purple); }
-
-        /* ЭКРАН 2: ОСНОВНОЙ (НЕОН) */
-        #main-screen {
-            position: fixed;
-            width: 100%; height: 100%;
-            background: var(--dark-bg);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: 1s;
+        /* ОСНОВНОЙ КОНТЕНТ */
+        #main-app {
+            position: fixed; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: 1s;
+            background-size: cover !important; background-position: center !important;
         }
 
-        /* Волна */
-        .wave {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100px;
-            background: url('https://i.stack.imgur.com/S6S7G.png'); /* Фиктивная ссылка для примера формы волны */
-            background-color: var(--neon-purple);
-            clip-path: ellipse(80% 50% at 50% 0%);
-            filter: blur(20px); opacity: 0.3;
+        /* Навигация */
+        nav {
+            position: absolute; top: 0; width: 100%; padding: 20px 50px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
         }
+        .nav-links span { margin: 0 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .nav-links span:hover, .nav-links span.active { color: var(--neon); text-shadow: 0 0 10px var(--neon); }
+        .user-controls i { margin-left: 20px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; }
+        .user-controls i:hover { color: var(--neon); }
 
-        /* Контейнер для ссылок */
-        .links-container {
-            z-index: 10; display: flex; flex-direction: column; gap: 20px;
+        /* Вкладки */
+        .tab-content {
+            display: none; width: 100%; height: 100%; 
+            flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
+        .tab-content.active { display: flex; }
 
-        .link-card {
-            display: flex; align-items: center; gap: 15px;
-            padding: 15px 40px; border-radius: 50px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(188, 19, 254, 0.3);
-            color: white; text-decoration: none;
-            font-size: 1.2rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .link-card:hover {
-            transform: scale(1.1); background: rgba(188, 19, 254, 0.1);
-            border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
-        }
-        .link-card i { font-size: 1.5rem; }
+        /* Инвокер */
+        .invoker-anim { width: 300px; filter: drop-shadow(0 0 20px var(--neon)); margin-bottom: 20px; }
 
-        /* Холст для ромбиков */
-        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        /* Кнопки Соцсетей */
+        .social-btn {
+            display: flex; align-items: center; gap: 15px; padding: 15px 40px; margin: 10px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--neon);
+            border-radius: 50px; color: white; text-decoration: none; transition: 0.4s;
+        }
+        .social-btn:hover { transform: scale(1.1); background: rgba(188, 19, 254, 0.2); box-shadow: 0 0 30px var(--neon); }
+
+        /* Окно Профиля */
+        #profile-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(10, 10, 10, 0.95); border: 1px solid var(--neon);
+            padding: 30px; border-radius: 20px; z-index: 2000; display: none; width: 320px;
+        }
+        .modal-active #profile-modal { display: block; transform: translate(-50%, -50%) scale(1); }
+        .profile-info { text-align: left; margin-bottom: 20px; }
+        .pass-group { display: flex; align-items: center; gap: 10px; }
+        
+        /* Стили кнопок и инпутов */
+        input { width: 100%; padding: 10px; margin: 10px 0; background: #111; border: 1px solid #333; color: white; border-radius: 5px; }
+        .btn { background: var(--neon); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; }
+        select { width: 100%; padding: 8px; background: #111; color: white; border: 1px solid var(--neon); margin-top: 10px; }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: -1; }
     </style>
 </head>
-<body>
+<body class="">
+
+    <audio id="bg-music" loop><source src="https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" type="audio/mpeg"></audio>
 
     <div id="login-screen">
-        <h1 class="site-title">Vkorinloq's Links</h1>
+        <div class="clocks">
+            <div class="clock-item">MSK: <span id="msk">00:00</span></div>
+            <div class="clock-item">LON: <span id="lon">00:00</span></div>
+            <div class="clock-item">WAR: <span id="war">00:00</span></div>
+            <div class="clock-item">FRA: <span id="fra">00:00</span></div>
+        </div>
+        <h1 style="margin-bottom:20px; text-transform:uppercase; letter-spacing:5px;">Vkorinloq's Links</h1>
         <div class="auth-card">
-            <div class="auth-tabs">
-                <button class="tab-btn active" onclick="switchTab('login')">ВХОД</button>
-                <button class="tab-btn" onclick="switchTab('reg')">РЕГИСТРАЦИЯ</button>
-            </div>
-            
-            <div id="auth-form">
-                <input type="email" id="email" placeholder="Email@gmail.com">
-                <input type="text" id="acc-name" placeholder="Account Name" style="display:none;">
-                <input type="password" id="password" placeholder="Пароль">
-                <button class="main-btn" id="submit-btn" onclick="handleAuth()">ВОЙТИ</button>
-            </div>
+            <p style="font-size: 0.8rem; margin-bottom: 15px;">Зареганы: <span id="reg-count-login" style="color:var(--neon)">...</span></p>
+            <input type="email" id="email" placeholder="Email@gmail.com">
+            <input type="password" id="password" placeholder="Пароль">
+            <button class="btn" onclick="handleAuth('login')">ВОЙТИ</button>
+            <button class="btn" style="margin-top:10px; background:transparent; border:1px solid var(--neon)" onclick="handleAuth('reg')">РЕГИСТРАЦИЯ</button>
         </div>
     </div>
 
-    <div id="main-screen">
-        <div class="wave"></div>
-        <canvas id="canvas"></canvas>
-        
-        <div class="links-container">
-            <a href="https://t.me/asapfrosty" target="_blank" class="link-card">
-                <i class="fab fa-telegram"></i> Telegram: @asapfrosty
+    <div id="main-app">
+        <nav>
+            <div class="nav-links">
+                <span id="nav-main" class="active" onclick="showTab('main')">ГЛАВНАЯ</span>
+                <span id="nav-social" onclick="showTab('social')">СОЦ-СЕТИ</span>
+            </div>
+            <div class="user-controls">
+                <i class="fas fa-user-circle" onclick="toggleProfile()" title="Профиль"></i>
+                <i class="fas fa-sign-out-alt" onclick="logout()" title="Выйти"></i>
+            </div>
+        </nav>
+
+        <div id="tab-main" class="tab-content active">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHIwdXNwamN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4eXN4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/5SshmHvx6r5Lidr2vB/giphy.gif" class="invoker-anim" alt="Invoker">
+            <h2>Привет, это сайт Арсеньки</h2>
+            <div style="margin-top:20px; line-height: 1.8; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 15px;">
+                <p>ПТС в доте: <b>Много</b></p>
+                <p>Возраст: <b>Достаточно</b></p>
+                <p>Рост: <b>Геометрический</b></p>
+                <p>Вес: <b>Идеальный</b></p>
+            </div>
+        </div>
+
+        <div id="tab-social" class="tab-content">
+            <a href="https://t.me/asapfrosty" target="_blank" class="social-btn">
+                <i class="fab fa-telegram" style="font-size:2rem; color:#26A5E4;"></i> Telegram: @asapfrosty
             </a>
-            <a href="https://steamcommunity.com/profiles/76561199493770952/" target="_blank" class="link-card">
-                <i class="fab fa-steam"></i> Steam Profile
+            <a href="https://steamcommunity.com/profiles/76561199493770952/" target="_blank" class="social-btn">
+                <i class="fab fa-steam" style="font-size:2rem; color:#66c0f4;"></i> Steam Profile
             </a>
         </div>
+
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="profile-modal">
+        <h3>Мой Профиль</h3>
+        <div class="profile-info" style="margin-top:15px;">
+            <p style="font-size:0.8rem; color:#777;">Email:</p>
+            <p id="p-email">загрузка...</p>
+            <p style="font-size:0.8rem; color:#777; margin-top:10px;">Пароль:</p>
+            <div class="pass-group">
+                <input type="password" id="p-pass" value="******" readonly style="margin:0;">
+                <i class="fas fa-eye" onmousedown="showPass()" onmouseup="hidePass()" style="cursor:pointer; color:var(--neon)"></i>
+            </div>
+        </div>
+        <p style="font-size:0.8rem; color:#777;">Выбор фона:</p>
+        <select id="bg-select" onchange="changeBg(this.value)">
+            <option value="mountains">Горы</option>
+            <option value="sea">Море</option>
+            <option value="forest">Лес</option>
+            <option value="sky">Ночное небо</option>
+            <option value="earth">Планета Земля</option>
+        </select>
+        <button class="btn" style="margin-top:20px;" onclick="toggleProfile()">Закрыть</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // ТВОИ ДАННЫЕ ИЗ FIREBASE (Вставь их сюда!)
         const firebaseConfig = {
             apiKey: "AIzaSyBHdupcoyWmWmSQhuxaGKczKhMI8zyq0VM",
             authDomain: "vkorinloqq.firebaseapp.com",
             projectId: "vkorinloqq",
             storageBucket: "vkorinloqq.firebasestorage.app",
             messagingSenderId: "239986490775",
-            appId: "1:239986490775:web:1d6b7b132eb20db07058d2"
+            appId: "1:239986490775:web:1d6b7b132eb20db07058d2",
+            databaseURL: "https://vkorinloqq-default-rtdb.firebaseio.com"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getDatabase(app);
 
-        window.currentMode = 'login';
+        // Часы
+        setInterval(() => {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('msk').innerText = new Intl.DateTimeFormat('ru-RU', { ...options, timeZone: 'Europe/Moscow' }).format(now);
+            document.getElementById('lon').innerText = new Intl.DateTimeFormat('ru-RU', { ...options, timeZone: 'Europe/London' }).format(now);
+            document.getElementById('war').innerText = new Intl.DateTimeFormat('ru-RU', { ...options, timeZone: 'Europe/Warsaw' }).format(now);
+            document.getElementById('fra').innerText = new Intl.DateTimeFormat('ru-RU', { ...options, timeZone: 'Europe/Berlin' }).format(now);
+        }, 1000);
 
-        window.switchTab = (mode) => {
-            window.currentMode = mode;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('acc-name').style.display = mode === 'reg' ? 'block' : 'none';
-            document.getElementById('submit-btn').innerText = mode === 'reg' ? 'СОЗДАТЬ' : 'ВОЙТИ';
-        };
+        // Кол-во юзеров
+        onValue(ref(db, 'stats/users'), (s) => {
+            const count = s.val() || 0;
+            document.getElementById('reg-count-login').innerText = count;
+        });
 
-        window.handleAuth = async () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
+        // Авторизация
+        window.handleAuth = async (type) => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
             try {
-                if (window.currentMode === 'reg') {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    alert("Аккаунт создан!");
+                if(type === 'reg') {
+                    await createUserWithEmailAndPassword(auth, e, p);
+                    runTransaction(ref(db, 'stats/users'), c => (c || 0) + 1);
+                    alert("Успешно зареган!");
                 } else {
-                    await signInWithEmailAndPassword(auth, email, password);
+                    await signInWithEmailAndPassword(auth, e, p);
                 }
-                // Переход на главную
-                document.getElementById('login-screen').style.transform = 'translateY(-100%)';
-                document.getElementById('main-screen').style.opacity = '1';
-                document.getElementById('main-screen').style.pointerEvents = 'all';
-                initDiamonds();
-            } catch (error) {
-                alert("Ошибка: " + error.message);
-            }
+            } catch (err) { alert(err.message); }
         };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-screen').style.transform = 'translateY(-100%)';
+                document.getElementById('main-app').style.opacity = '1';
+                document.getElementById('main-app').style.pointerEvents = 'all';
+                document.getElementById('p-email').innerText = user.email;
+                window.tempPass = document.getElementById('password').value;
+                document.getElementById('bg-music').volume = 0.2;
+                document.getElementById('bg-music').play();
+                initDiamonds();
+            } else {
+                document.getElementById('login-screen').style.transform = 'translateY(0)';
+                document.getElementById('main-app').style.opacity = '0';
+            }
+        });
+
+        window.logout = () => signOut(auth);
     </script>
 
     <script>
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-links span').forEach(s => s.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('nav-' + tab).classList.add('active');
+        }
+
+        function toggleProfile() { document.body.classList.toggle('modal-active'); }
+        
+        function showPass() { 
+            const el = document.getElementById('p-pass');
+            el.type = 'text'; 
+            el.value = window.tempPass || "******";
+        }
+        function hidePass() { 
+            const el = document.getElementById('p-pass');
+            el.type = 'password'; 
+            el.value = "******";
+        }
+
+        const backgrounds = {
+            mountains: "url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80')",
+            sea: "url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1920&q=80')",
+            forest: "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1920&q=80')",
+            sky: "url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=1920&q=80')",
+            earth: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80')"
+        };
+
+        function changeBg(val) {
+            document.getElementById('main-app').style.background = backgrounds[val];
+        }
+
+        // Ромбики (тот же код)
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let diamonds = [];
-
         function initDiamonds() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            for(let i=0; i<30; i++) {
-                diamonds.push(new Diamond());
-            }
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            for(let i=0; i<25; i++) diamonds.push({
+                x: Math.random()*canvas.width, y: -50, s: Math.random()*15+5, sp: Math.random()*2+1, h: []
+            });
             animate();
         }
-
-        class Diamond {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = -50;
-                this.size = Math.random() * 15 + 5;
-                this.speed = Math.random() * 3 + 1;
-                this.history = []; // Для следа
-            }
-            draw() {
-                // Рисуем след
-                this.history.forEach((pos, index) => {
-                    let opacity = index / this.history.length;
-                    ctx.save();
-                    ctx.translate(pos.x, pos.y);
-                    ctx.rotate(Math.PI / 4);
-                    ctx.fillStyle = `rgba(188, 19, 254, ${opacity * 0.3})`;
-                    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
-                    ctx.restore();
-                });
-
-                // Рисуем сам ромбик
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(Math.PI / 4);
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = '#bc13fe';
-                ctx.fillStyle = '#bc13fe';
-                ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
-                ctx.restore();
-            }
-            update() {
-                this.history.push({x: this.x, y: this.y});
-                if(this.history.length > 15) this.history.shift();
-                
-                this.y += this.speed;
-                if(this.y > canvas.height + 20) this.reset();
-            }
-        }
-
         function animate() {
-            ctx.fillStyle = 'rgba(10, 10, 10, 0.8)'; // Хвост затухания
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(10,10,10,0.2)'; ctx.fillRect(0,0,canvas.width,canvas.height);
             diamonds.forEach(d => {
-                d.update();
-                d.draw();
+                d.h.push({x: d.x, y: d.y}); if(d.h.length > 15) d.h.shift();
+                d.h.forEach((pos, i) => {
+                    ctx.save(); ctx.translate(pos.x, pos.y); ctx.rotate(Math.PI/4);
+                    ctx.fillStyle = `rgba(188,19,254,${i/d.h.length*0.2})`;
+                    ctx.fillRect(-d.s/2,-d.s/2,d.s,d.s); ctx.restore();
+                });
+                d.y += d.sp; if(d.y > canvas.height+50) { d.y = -50; d.x = Math.random()*canvas.width; }
+                ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(Math.PI/4);
+                ctx.shadowBlur=15; ctx.shadowColor='#bc13fe'; ctx.fillStyle='#bc13fe';
+                ctx.fillRect(-d.s/2,-d.s/2,d.s,d.s); ctx.restore();
             });
             requestAnimationFrame(animate);
         }
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        changeBg('mountains'); // Стартовый фон
     </script>
 </body>
 </html>
